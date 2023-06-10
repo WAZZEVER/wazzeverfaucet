@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Referrer Check</title>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      text-align: center;
+      font-family: Arial, sans-serif;
+      background-color: grey;
+    }
+  </style>
+</head>
+<body>
+  <div class="box">
+  <h1 class="is-size-1	">Referrer Check</h1>  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+  <progress class="progress is-danger" max="100">30%</progress>
+  <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-firestore.js"></script>
+  
+  <script>
+
+var firebaseConfig = {
+  apiKey: "AIzaSyDbCzXFmL3Hyex2uzwiYRaWNvPCWJLudDU",
+  authDomain: "testwazz-460a6.firebaseapp.com",
+  projectId: "testwazz-460a6",
+  storageBucket: "testwazz-460a6.appspot.com",
+  messagingSenderId: "226425030359",
+  appId: "1:226425030359:web:718330be5829d30fab9292",
+  measurementId: "G-TWQL3V0EVE"
+};
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+
+    var referrer = document.referrer;
+    if (referrer.includes('https://shrinke.me/')) {
+
+      firebase.auth().onAuthStateChanged(function(user) {
+        if (user) {
+          const userEmail = user.email;
+
+          // Add 1 token to the user's balance in the database
+          var db = firebase.firestore();
+          var userRef = db.collection('faucet').doc(userEmail);
+          userRef.get().then(function(doc) {
+            if (doc.exists) {
+              var currentBalance = doc.data().balance || 0;
+              var newBalance = currentBalance + 10;
+              userRef.update({ 
+                balance: newBalance,
+  shrinkcool: new Date().toISOString()
+              })
+                .then(function() {
+                  console.log('Token added successfully');
+                })
+                .catch(function(error) {
+                  console.log('Error updating balance:', error);
+                });
+            } else {
+              // Create a new user document with an initial balance of 1 token
+              userRef.set({ 
+                balance: 1,
+  shrinkcool: new Date().toISOString()
+              })
+                .then(function() {
+                  console.log('New user created successfully');
+                })
+                .catch(function(error) {
+                  console.log('Error creating new user:', error);
+                });
+            }
+          }).catch(function(error) {
+            console.log('Error getting user:', error);
+          });
+
+        } else {
+          console.log('User not authenticated');
+        }
+      });
+                setTimeout(function() {
+      window.location.href = 'https://wazz-faucet-web.walterbbg.repl.co/';
+                }, 5000); // 5000 milliseconds = 5 seconds
+    } else {
+      document.write('<p>Unauthorized access.</p>');
+            window.location.href = 'https://wazz-faucet-web.walterbbg.repl.co/';
+    }
+  </script>
+  </div>
+</body>
+</html>
