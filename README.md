@@ -12,9 +12,9 @@ Please note that the code in this repository is protected by the following restr
 
 1. **Licensing:** All rights to this codebase are reserved. Unauthorized use, reproduction, or distribution of the code is strictly prohibited, unless explicit permission is granted.
 
-2. **Permission Requirement:** If you wish to use this code or any part of it in your projects, you must obtain written permission from the project owner ([Your Name]). Failure to do so will be considered a violation of the usage restrictions.
+2. **Permission Requirement:** If you wish to use this code or any part of it in your projects, you must obtain written permission from the project owner ([WALTERB]). Failure to do so will be considered a violation of the usage restrictions.
 
-3. **Payment:** In addition to obtaining permission, a licensing fee or appropriate compensation must be paid to the project owner ([Your Name]) for the usage of this code. The specific terms and conditions, as well as the payment details, will be determined on a case-by-case basis.
+3. **Payment:** In addition to obtaining permission, a licensing fee or appropriate compensation must be paid to the project owner ([WALTERB]) for the usage of this code. The specific terms and conditions, as well as the payment details, will be determined on a case-by-case basis.
 
 To request permission for using this code or to discuss licensing and payment arrangements, please contact [WALTERB#1372 (discord] via [junjueang@gmail.com]. 
 
