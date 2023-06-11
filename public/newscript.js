@@ -141,7 +141,7 @@ claimButton.addEventListener('click', function() {
             faucool: cooldownTime
           })
             .then(function() {
-              console.log('Token added successfully');
+              alert('Token added successfully');
               updateTimer(faucool); // Update the timer with the stored cooldown value
             })
             .catch(function(error) {
