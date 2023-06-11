@@ -128,6 +128,7 @@ document.getElementById("redirectLink").addEventListener("click", function() {
       }
 
     } else {
+             alert("Pls login first! You wont get any token if you havent login!");
       window.location.href = "https://shrinke.me/faucetweb";
     }
   })
@@ -155,13 +156,15 @@ claimButton.addEventListener('click', function() {
           })
             .then(function() {
               console.log('Token added successfully');
+                         alert("Error!");
             })
             .catch(function(error) {
               console.log('Error updating balance:', error);
+                         alert("Error!");
             });
         }
       } else {
-        alert("User does not exist!");
+        alert("Pls login first!");
       }
     });
   }
