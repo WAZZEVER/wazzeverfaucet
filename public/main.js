@@ -1,5 +1,6 @@
 const detect = document.querySelector("#detect");
 const wrapper = document.querySelector(".wrapper");
+const claimcoin = document.getElementById("claimcoin");
 const overlay = document.createElement("div"); // Create overlay element
 overlay.classList.add("overlay"); // Add overlay class to the element
 document.body.insertBefore(overlay, detect); // Insert overlay before the detect element
@@ -10,6 +11,8 @@ let adClasses = ["ad", "ads", "adsbox", "doubleclick", "ad-placement", "ad-place
 for (let item of adClasses) {
   detect.classList.add(item);
 }
+
+
 
 let getProperty = window.getComputedStyle(detect).getPropertyValue("display");
 if (!wrapper.classList.contains("show")) {
