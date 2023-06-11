@@ -142,6 +142,8 @@ claimButton.addEventListener('click', function() {
           })
             .then(function() {
               alert('Token added successfully');
+location.reload();
+     
               updateTimer(faucool); // Update the timer with the stored cooldown value
             })
             .catch(function(error) {
