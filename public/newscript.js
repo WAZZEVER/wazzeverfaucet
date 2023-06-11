@@ -233,14 +233,16 @@ withdrawButton.addEventListener('click', function() {
                 alert("Withdrawal successful! Coins will be sent to your Discord balance.");
               }).catch(function(error) {
                 console.log('Error adding withdrawal:', error);
+                             alert("Error!");
               });
             });
           }).catch(function(error) {
             console.log('Error updating balance:', error);
+             alert("Error!");
           });
         }
       } else {
-        alert("User does not exist!");
+        alert("Pls login first!");
       }
     });
   }
