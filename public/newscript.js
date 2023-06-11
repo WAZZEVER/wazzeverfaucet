@@ -1,7 +1,6 @@
 const outButton = document.getElementById('logout');
 const inButton = document.getElementById('login');
 const userName = document.getElementById('username');
-const claimcoin = document.getElementById('claimcoin');
 
 var firebaseConfig = {
   apiKey: "AIzaSyDbCzXFmL3Hyex2uzwiYRaWNvPCWJLudDU",
