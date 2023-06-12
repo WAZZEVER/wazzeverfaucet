@@ -131,35 +131,62 @@ claimButton.addEventListener('click', function() {
           token: newToken,
           faucool: cooldownTime
         })
+     
+var claimButton = document.getElementById('claimcoin');
+
+// Add a click event listener to the button
+claimButton.addEventListener('click', function() {
+  var userEmail = getUserEmail(); // Replace getUserEmail() with the code to get the user's email
+
+  if (userEmail === null) {
+    alert("Please login first!");
+  } else {
+    // Add 1 token to the user's balance in the database
+    var db = firebase.firestore();
+    var userRef = db.collection('faucet').doc(userEmail);
+    userRef.get().then(function(doc) {
+      if (doc.exists) {
+        var currentToken = doc.data().token || 0; // Get the current token value or default to 0
+        var faucool = doc.data().faucool || null; // Get the current cooldown value or null if not set
+        if (faucool !== null && faucool > Date.now()) {
+          var remainingCooldown = Math.ceil((faucool - Date.now()) / (1000 * 60 * 60)); // Convert milliseconds to hours
+          alert("Please wait for " + remainingCooldown + " more hours before claiming again!");
+        } else {
+          var newToken = currentToken + 1;
+          var cooldownTime = Date.now() + (2 * 60 * 60 * 1000); // Set the cooldown to 2 hours from now
+          userRef.update({
+            token: newToken,
+            faucool: cooldownTime
+          })
+            .then(function() {
+              alert('Token added successfully');
+              updateTimer(faucool); // Update the timer with the stored cooldown value
+              location.reload();
+            })
+            .catch(function(error) {
+              console.log('Error updating balance:', error);
+            });
+        }
+      } else {
+        // User does not exist, add the user with initial token and cooldown values
+        var newToken = 1;
+        var cooldownTime = Date.now() + (2 * 60 * 60 * 1000); // Set the cooldown to 2 hours from now
+        userRef.set({
+          token: newToken,
+          faucool: cooldownTime
+        })
           .then(function() {
             alert('Token added successfully');
-            updateTimer(faucool); // Update the timer with the stored cooldown value
+            updateTimer(null); // Update the timer with null cooldown value
             location.reload();
           })
           .catch(function(error) {
-            console.log('Error updating balance:', error);
+            console.log('Error adding user:', error);
           });
       }
-    } else {
-      // User does not exist, add the user with initial token and cooldown values
-      var newToken = 1;
-      var cooldownTime = Date.now() + (2 * 60 * 60 * 1000); // Set the cooldown to 2 hours from now
-      userRef.set({
-        token: newToken,
-        faucool: cooldownTime
-      })
-        .then(function() {
-          alert('Token added successfully');
-          updateTimer(null); // Update the timer with null cooldown value
-          location.reload();
-        })
-        .catch(function(error) {
-          console.log('Error adding user:', error);
-        });
-    }
-  });
-}
-
+    });
+  }
+});
 
 function updateTimer(cooldownTime) {
   var timerElement = document.getElementById('timerValue');
