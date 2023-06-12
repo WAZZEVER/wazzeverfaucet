@@ -112,31 +112,6 @@ var claimButton = document.getElementById('claimcoin');
 // Add a click event listener to the button
 claimButton.addEventListener('click', function() {
   if (userEmail === null) {
-  alert("Please login first!");
-} else {
-  // Add 1 token to the user's balance in the database
-  var db = firebase.firestore();
-  var userRef = db.collection('faucet').doc(userEmail);
-  userRef.get().then(function(doc) {
-    if (doc.exists) {
-      var currentToken = doc.data().token || 0; // Get the current token value or default to 0
-      var faucool = doc.data().faucool || null; // Get the current cooldown value or null if not set
-      if (faucool !== null && faucool > Date.now()) {
-        var remainingCooldown = Math.ceil((faucool - Date.now()) / (1000 * 60 * 60)); // Convert milliseconds to hours
-        alert("Please wait for " + remainingCooldown + " more hours before claiming again!");
-      } else {
-        var newToken = currentToken + 1;
-        var cooldownTime = Date.now() + (2 * 60 * 60 * 1000); // Set the cooldown to 2 hours from now
-        userRef.update({
-          token: newToken,
-          faucool: cooldownTime
-        })
-     
-var claimButton = document.getElementById('claimcoin');
-
-// Add a click event listener to the button
-claimButton.addEventListener('click', function() {
-  if (userEmail === null) {
     alert("Please login first!");
   } else {
     // Add 1 token to the user's balance in the database
@@ -171,7 +146,7 @@ claimButton.addEventListener('click', function() {
     });
   }
 });
-        
+
 function updateTimer(cooldownTime) {
   var timerElement = document.getElementById('timerValue');
   var intervalId = setInterval(function() {
