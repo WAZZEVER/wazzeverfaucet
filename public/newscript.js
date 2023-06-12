@@ -125,8 +125,8 @@ claimButton.addEventListener('click', function() {
           var remainingCooldown = Math.ceil((faucool - Date.now()) / (1000 * 60 * 60)); // Convert milliseconds to hours
           alert("Please wait for " + remainingCooldown + " more hours before claiming again!");
         } else {
-          var newToken = currentToken + 1;
-          var cooldownTime = Date.now() + (2 * 60 * 60 * 1000); // Set the cooldown to 2 hours from now
+          var newToken = currentToken + 10;
+          var cooldownTime = Date.now() + (24 * 60 * 60 * 1000); // Set the cooldown to 24 hours from now
           userRef.update({
             token: newToken,
             faucool: cooldownTime
@@ -142,8 +142,8 @@ claimButton.addEventListener('click', function() {
         }
       } else {
         // User does not exist, add the user with initial token and cooldown values
-        var newToken = 1;
-        var cooldownTime = Date.now() + (2 * 60 * 60 * 1000); // Set the cooldown to 2 hours from now
+        var newToken = 10;
+        var cooldownTime = Date.now() + (24 * 60 * 60 * 1000); // Set the cooldown to 24 hours from now
         userRef.set({
           token: newToken,
           faucool: cooldownTime
