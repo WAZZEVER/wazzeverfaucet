@@ -136,8 +136,6 @@ var claimButton = document.getElementById('claimcoin');
 
 // Add a click event listener to the button
 claimButton.addEventListener('click', function() {
- 
-
   if (userEmail === null) {
     alert("Please login first!");
   } else {
@@ -153,7 +151,7 @@ claimButton.addEventListener('click', function() {
           alert("Please wait for " + remainingCooldown + " more hours before claiming again!");
         } else {
           var newToken = currentToken + 1;
-          var cooldownTime = Date.now() + (2 * 60 * 60 * 1000); // Set the cooldown to 2 hours from now
+          var cooldownTime = Date.now() + (2 * 60 * 60 * 1000); // Set the cooldown to 5 hours from now
           userRef.update({
             token: newToken,
             faucool: cooldownTime
@@ -161,33 +159,19 @@ claimButton.addEventListener('click', function() {
             .then(function() {
               alert('Token added successfully');
               updateTimer(faucool); // Update the timer with the stored cooldown value
-              location.reload();
+              location.reload()
             })
             .catch(function(error) {
               console.log('Error updating balance:', error);
             });
         }
       } else {
-        // User does not exist, add the user with initial token and cooldown values
-        var newToken = 1;
-        var cooldownTime = Date.now() + (2 * 60 * 60 * 1000); // Set the cooldown to 2 hours from now
-        userRef.set({
-          token: newToken,
-          faucool: cooldownTime
-        })
-          .then(function() {
-            alert('Token added successfully');
-            updateTimer(null); // Update the timer with null cooldown value
-            location.reload();
-          })
-          .catch(function(error) {
-            console.log('Error adding user:', error);
-          });
+        alert("Pls login first!");
       }
     });
   }
 });
-
+        
 function updateTimer(cooldownTime) {
   var timerElement = document.getElementById('timerValue');
   var intervalId = setInterval(function() {
