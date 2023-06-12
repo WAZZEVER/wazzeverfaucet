@@ -111,7 +111,7 @@ var claimButton = document.getElementById('claimcoin');
 // Add a click event listener to the button
 claimButton.addEventListener('click', function() {
 
-  if (userEmail === null) {
+  if (typeof userEmail === 'undefined') {
     alert("Please login first!");
   } else {
     // Add 1 token to the user's balance in the database
