@@ -136,7 +136,7 @@ var claimButton = document.getElementById('claimcoin');
 
 // Add a click event listener to the button
 claimButton.addEventListener('click', function() {
-  var userEmail = getUserEmail(); // Replace getUserEmail() with the code to get the user's email
+ 
 
   if (userEmail === null) {
     alert("Please login first!");
