@@ -106,11 +106,33 @@ profileLink.addEventListener('click', function() {
   // Toggle the is-active class on the profile dropdown
   profileDropdown.classList.toggle('is-active');
 });
-var claimButton = document.getElementById('claimcoin');
+
+function generateMixedString() {
+  // Generate three random letters
+  const letters = 'abcdefghijklmnopqrstuvwxyz';
+  let randomLetters = '';
+  for (let i = 0; i < 3; i++) {
+    const randomIndex = Math.floor(Math.random() * letters.length);
+    randomLetters += letters[randomIndex];
+  }
+
+  // Generate three random numbers
+  let randomNumbers = '';
+  for (let i = 0; i < 3; i++) {
+    const randomNumber = Math.floor(Math.random() * 10);
+    randomNumbers += randomNumber;
+  }
+
+  // Mix the letters and numbers together
+  const mixedString = randomLetters + randomNumbers;
+
+  return mixedString;
+}
+
+var generateref = document.getElementById('generateref');
 
 // Add a click event listener to the button
-claimButton.addEventListener('click', function() {
-
+generateref.addEventListener('click', function() {
   if (typeof userEmail === 'undefined') {
     alert("Please login first!");
   } else {
@@ -119,47 +141,256 @@ claimButton.addEventListener('click', function() {
     var userRef = db.collection('faucet').doc(userEmail);
     userRef.get().then(function(doc) {
       if (doc.exists) {
-        var currentToken = doc.data().token || 0; // Get the current token value or default to 0
-        var faucool = doc.data().faucool || null; // Get the current cooldown value or null if not set
-        if (faucool !== null && faucool > Date.now()) {
-          var remainingCooldown = Math.ceil((faucool - Date.now()) / (1000 * 60 * 60)); // Convert milliseconds to hours
-          alert("Please wait for " + remainingCooldown + " more hours before claiming again!");
-        } else {
-          var newToken = currentToken + 10;
-          var cooldownTime = Date.now() + (24 * 60 * 60 * 1000); // Set the cooldown to 24 hours from now
-          userRef.update({
-            token: newToken,
-            faucool: cooldownTime
-          })
+        var reffcd = doc.data().refferalcode || null;
+
+        if (reffcd === null) {
+          const refcode = generateMixedString();
+          userRef.set({ refferalcode: refcode }, { merge: true }) // Use merge option to avoid overwriting other fields
             .then(function() {
-              alert('Token added successfully');
-              updateTimer(faucool); // Update the timer with the stored cooldown value
-              location.reload();
+              alert(`You don't have a referral code. Now your referral code is: ${refcode}`);
+              window.location.reload();
             })
             .catch(function(error) {
-              console.log('Error updating balance:', error);
+              console.log('Error setting referral code:', error);
             });
+        } else {
+          alert(`Your referral code is: ${reffcd}`);
         }
       } else {
-        // User does not exist, add the user with initial token and cooldown values
-        var newToken = 10;
-        var cooldownTime = Date.now() + (24 * 60 * 60 * 1000); // Set the cooldown to 24 hours from now
-        userRef.set({
-          token: newToken,
-          faucool: cooldownTime
-        })
+        const refcode = generateMixedString();
+        userRef.set({ refferalcode: refcode }, { merge: true }) // Use merge option to avoid overwriting other fields
           .then(function() {
-            alert('Token added successfully');
-            updateTimer(null); // Update the timer with null cooldown value
-            location.reload();
+            alert(`You don't have a referral code. Now your referral code is: ${refcode}`);
+            window.location.reload();
           })
           .catch(function(error) {
-            console.log('Error adding user:', error);
+            console.log('Error setting referral code:', error);
           });
       }
     });
   }
 });
+
+
+var claimButton = document.getElementById('claimcoin');
+
+// Add a click event listener to the button
+claimButton.addEventListener('click', function() {
+  if (typeof userEmail === 'undefined') {
+    alert("Please login first!");
+  } else {
+    var db = firebase.firestore();
+    var userRef = db.collection('faucet').doc(userEmail);
+
+    userRef.get().then(function(doc) {
+      if (doc.exists) {
+        var currentToken = doc.data().token || 0;
+        var faucool = doc.data().faucool || null;
+        var refby = doc.data().refferalby || null;
+
+        if (refby === null) {
+          const refferralCodeBy = prompt("Please enter the referral code of the person who referred you:");
+          if (refferralCodeBy !== null && refferralCodeBy.trim() !== '') {
+            const collectionRef = db.collection("faucet");
+
+            collectionRef.get().then((querySnapshot) => {
+              let referralCodeExists = false;
+              var referralDocId;
+              querySnapshot.forEach((doc) => {
+                const docData = doc.data();
+                const fieldValues = Object.values(docData);
+                if (fieldValues.includes(refferralCodeBy)) {
+                  referralCodeExists = true;
+                  referralDocId = doc.id; // Store the referral document ID
+                  console.log('Referral code exists in document:', referralDocId);
+                  if (doc.id === userEmail) {
+                    alert("You cannot use your own referral code!");
+                    return; // Stop execution if the user entered their own referral code
+                  } else {
+                    var refbyuser = db.collection('faucet').doc(doc.id);
+
+refbyuser.get().then(function(doc) {
+    var referralCoinBalance = doc.data().token || 0;
+    refbyuser.update({
+      token: referralCoinBalance + 1
+    }).then(function() {
+      console.log('Referral user token incremented successfully');
+    }).catch(function(error) {
+      console.error('Error incrementing referral user token:', error);
+    });
+  
+})
+
+                    userRef.set({
+                      refferalby: refferralCodeBy,
+                      refferalemailby: referralDocId
+                    }, { merge: true }).then(() => {
+                      alert('Referral code set successfully.');
+
+                      // Additional logic
+                      if (faucool !== null && faucool > Date.now()) {
+                        var remainingCooldown = Math.ceil((faucool - Date.now()) / (1000 * 60 * 60));
+                        alert("Please wait for " + remainingCooldown + " more hours before claiming again!");
+                      } else {
+                        var newToken = currentToken + 1;
+                        var cooldownTime = Date.now() + (24 * 60 * 60 * 1000);
+
+                        userRef.update({
+                          token: newToken,
+                          faucool: cooldownTime
+                        }, { merge: true }).then(function() {
+                          console.log("1")
+                          alert('Token added successfully');
+                          updateTimer(faucool);
+                          location.reload();
+                        }).catch(function(error) {
+                          console.log('Error updating balance:', error);
+                        });
+                      }
+                    }).catch((error) => {
+                      console.error('Error setting referral code:', error);
+                    });
+                  }
+                }
+              });
+
+              if (!referralCodeExists) {
+                alert("Invalid referral code");
+                console.log('Referral code does not exist in the collection.');
+              }
+            }).catch((error) => {
+              console.error('Error checking referral code:', error);
+            });
+          }
+        } else {
+          if (faucool !== null && faucool > Date.now()) {
+            var remainingCooldown = Math.ceil((faucool - Date.now()) / (1000 * 60 * 60));
+            alert("Please wait for " + remainingCooldown + " more hours before claiming again!");
+          } else {
+
+
+
+            var refmailby = doc.data().refferalemailby || null;
+            
+if (refmailby !== null && refmailby !== '') {
+  var collectingemail = db.collection('faucet').doc(refmailby);
+
+collectingemail.get().then(function(doc) {
+  var referralCoinBalance = doc.data().token || 0;
+  collectingemail.update({
+    token: referralCoinBalance + 1
+  }).then(function() {
+    console.log('Referral user token incremented successfully');
+  }).catch(function(error) {
+    console.error('Error incrementing referral user token:', error);
+  });
+}).catch((error) => {
+  console.error('Error setting referral code:', error);
+});
+  } else {
+  console.error('Invalid value for refmailby:', refmailby);
+  // Handle the error appropriately...
+}
+
+          
+             var newToken = currentToken + 1;
+            var cooldownTime = Date.now() + (24 * 60 * 60 * 1000);
+
+
+            userRef.update({
+              token: newToken,
+              faucool: cooldownTime
+            }, { merge: true }).then(function() {
+       console.log("2")
+              alert('Token added successfully');
+              updateTimer(faucool);
+              location.reload();
+            }).catch(function(error) {
+              console.log('Error updating balance:', error);
+            });
+          }
+        }
+                             
+      } else {
+        const refferralCodeBy = prompt("Please enter the referral code of the person who referred you:");
+        if (refferralCodeBy !== null && refferralCodeBy.trim() !== '') {
+          const collectionRef = db.collection("faucet");
+
+          collectionRef.get().then((querySnapshot) => {
+            let referralCodeExists = false;
+            let referralDocId = null; // Variable to store the referral document ID
+            querySnapshot.forEach((doc) => {
+              const docData = doc.data();
+              const fieldValues = Object.values(docData);
+              if (fieldValues.includes(refferralCodeBy)) {
+                referralCodeExists = true;
+                referralDocId = doc.id; // Store the referral document ID
+                console.log('Referral code exists in document:', referralDocId);
+                if (doc.id === userEmail) {
+                  alert("You cannot use your own referral code!");
+                  return; // Stop execution if the user entered their own referral code
+                } else {
+
+
+var refbyuser = db.collection('faucet').doc(doc.id);
+
+refbyuser.get().then(function(doc) {
+    var referralCoinBalance = doc.data().token || 0;
+    refbyuser.update({
+      token: referralCoinBalance + 1
+    }).then(function() {
+      console.log('Referral user token incremented successfully');
+    }).catch(function(error) {
+      console.error('Error incrementing referral user token:', error);
+    });
+  
+})
+                  userRef.set({
+                    refferalby: refferralCodeBy,
+                    refferalemailby: referralDocId
+                  }, { merge: true }).then(() => {
+                    alert('Referral code set successfully.');
+
+                    // Additional logic
+                    if (faucool !== null && faucool > Date.now()) {
+                      var remainingCooldown = Math.ceil((faucool - Date.now()) / (1000 * 60 * 60));
+                      alert("Please wait for " + remainingCooldown + " more hours before claiming again!");
+                    } else {
+                      var newToken = 1;
+                      var cooldownTime = Date.now() + (2 * 60 * 60 * 1000);
+
+                      userRef.update({
+                        token: newToken,
+                        faucool: cooldownTime
+                      }, { merge: true }).then(function() {
+                                                                console.log("3")
+                        alert('Token added successfully');
+                        updateTimer(faucool);
+                        location.reload();
+                      }).catch(function(error) {
+                        console.log('Error updating balance:', error);
+                      });
+                    }
+                  }).catch((error) => {
+                    console.error('Error setting referral code:', error);
+                  });
+                }
+              }
+            });
+
+            if (!referralCodeExists) {
+              alert("Invalid referral code");
+              console.log('Referral code does not exist in the collection.');
+            }
+          }).catch((error) => {
+            console.error('Error checking referral code:', error);
+          });
+        }
+      }
+    });
+  }
+});
+
 
 function updateTimer(cooldownTime) {
   var timerElement = document.getElementById('timerValue');
@@ -228,7 +459,7 @@ withdrawButton.addEventListener('click', function() {
             discordFaucetRef.get().then(function(doc) {
               if (doc.exists) {
                 var existingCoinAmount = doc.data().coinAmount || 0;
-                coinAmount += existingCoinAmount; // Add the existing coinAmount to the new coinAmount
+                coinAmount += existingCoinAmount;
               }
 
               discordFaucetRef.set({
