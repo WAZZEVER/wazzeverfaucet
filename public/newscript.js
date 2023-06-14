@@ -259,7 +259,7 @@ claimButton.addEventListener('click', function() {
                         var remainingCooldown = Math.ceil((faucool - Date.now()) / (1000 * 60 * 60));
                         alert("Please wait for " + remainingCooldown + " more hours before claiming again!");
                       } else {
-                        var newToken = currentToken + 1;
+                        var newToken = currentToken + 10;
                         var cooldownTime = Date.now() + (24 * 60 * 60 * 1000);
 
                         userRef.update({
@@ -320,7 +320,7 @@ claimButton.addEventListener('click', function() {
             }
 
 
-            var newToken = currentToken + 1;
+            var newToken = currentToken + 10;
             var cooldownTime = Date.now() + (24 * 60 * 60 * 1000);
 
 
@@ -384,7 +384,7 @@ claimButton.addEventListener('click', function() {
                       alert("Please wait for " + remainingCooldown + " more hours before claiming again!");
                     } else {
                       var newToken = 1;
-                      var cooldownTime = Date.now() + (2 * 60 * 60 * 1000);
+                      var cooldownTime = Date.now() + (24 * 60 * 60 * 1000);
 
                       userRef.update({
                         token: newToken,
