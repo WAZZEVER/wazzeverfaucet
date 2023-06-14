@@ -119,7 +119,7 @@ function logout() {
   // Reset the info text
   document.getElementById('info').innerText = 'Hoi!';
 
-  window.location.reload()
+  window.location.href = "https://wazzeverfaucet.vercel.app/"
 }
 
 
