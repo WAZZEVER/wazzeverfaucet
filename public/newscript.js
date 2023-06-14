@@ -23,7 +23,7 @@ var disin = false;
 var ididscordid;
 
 window.onload = () => {
-const fragment = new URLSearchParams(window.location.search.slice(1));
+  const fragment = new URLSearchParams(window.location.hash.slice(1) || window.location.search.slice(1));
 const accessToken = fragment.get('access_token');
 const tokenType = fragment.get('token_type');
 
