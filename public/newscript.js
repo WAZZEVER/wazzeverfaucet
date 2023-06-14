@@ -24,8 +24,8 @@ var ididscordid;
 
 window.onload = () => {
   const fragment = new URLSearchParams(window.location.hash.slice(1) || window.location.search.slice(1));
-const accessToken = fragment.get('access_token');
-const tokenType = fragment.get('token_type');
+  const accessToken = fragment.get('access_token');
+  const tokenType = "Bearer";
 
   // Check if access token and token type are present in the URL fragment
   if (accessToken && tokenType) {
