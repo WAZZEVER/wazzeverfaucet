@@ -49,7 +49,7 @@ console.log(`token_type=${tokenType}`); // Log the token type
         document.getElementById('info').innerText = `${username}#${discriminator}`;
         disin = true;
         ididscordid = `${username}#${discriminator}`
-
+  window.location.href = "https://wazzeverfaucet.vercel.app/"
         var userRef = db.collection('faucet').doc(ididscordid);
         userRef.get().then(function(doc) {
           if (doc.exists) {
