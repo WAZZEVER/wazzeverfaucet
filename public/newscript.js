@@ -23,12 +23,15 @@ var disin = false;
 var ididscordid;
 
 window.onload = () => {
-  const fragment = new URLSearchParams(window.location.hash.slice(1));
-  console.log(fragment)
-  const accessToken = fragment.get('access_token');
-    console.log(accessToken)
-  const tokenType = fragment.get('token_type');
-    console.log(tokenType)
+  const fragment = window.location.hash.substr(1); // Get the fragment identifier without the leading #
+      console.log(fragment)
+  const params = new URLSearchParams(fragment);
+    console.log(params)
+  const accessToken = params.get('access_token');
+  console.log(accessToken)
+  const tokenType = params.get('token_type');
+  console.log(tokenType)
+
 
 
   // Check if access token and token type are present in the URL fragment
