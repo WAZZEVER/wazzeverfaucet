@@ -1,53 +1,128 @@
 <!DOCTYPE html>
 <html>
-
-<head>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" type="text/css" href="style.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.4/dist/sweetalert2.min.css">
-  <script src="https://www.gstatic.com/firebasejs/8.7.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.7.1/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.7.1/firebase-firestore.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.4/dist/sweetalert2.min.js"></script>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Wazzever Faucet</title>
-</head>
-
-
-
-<style>
-body{
-  background-color: #FDF6E3; /* Off-White or any other complementary color */
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  </head>
+  <style>
+    .overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5); /* Adjust the opacity as needed */
+  z-index: 1;
 }
-.containercard1 {
-  display: grid;
-  place-items: center;
-}
-
-.containercard {
-  width: 80%;
-    place-items: center;
-
 }
 
-  .faucetclaim{
-  place-items: center;
-    display: flex; justify-content: center; align-items: center;
-  }
+::selection{
+  color: #252323;
+  background: #9b27ca;
+}
+.wrapper{
+  position: absolute;
+  max-width: 480px;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  padding: 40px 30px;
+  background: #fff;
+  border-radius: 15px;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, -50%) scale(1.2);
+  box-shadow: 10px 10px 15px rgba(0,0,0,0.06);
+  transition: opacity 0.2s 0s ease-in-out,
+              transform 0.2s 0s ease-in-out;
+}
+.wrapper.show{
+  opacity: 1;
+  pointer-events: auto;
+  transform:translate(-50%, -50%) scale(1);
+}
+.wrapper .content,
+.content .warn-icon,
+.warn-icon .icon{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.wrapper .content{
+  flex-direction: column;
+}
+.content .warn-icon{
+  height: 115px;
+  width: 115px;
+  border-radius: 50%;
+  background: linear-gradient(#9b27ca 0%, #9927cf 0%, #d33639 100%, #f92121 100%);
+}
+.warn-icon .icon{
+  height: 100px;
+  width: 100px;
+  background: #fff;
+  border-radius: inherit;
+}
+.warn-icon .icon i{
+  background: linear-gradient(#9b27ca 0%, #9927cf 0%, #d33639 100%, #f92121 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-size: 50px;
+}
+.content h2{
+  margin-top: 35px;
+  font-size: 32px;
+}
+.content p{
+  font-size: 19px;
+  text-align: center;
+  margin-top: 20px;
+}
+.btn{
+  height: 57px;
+  width: 223px;
+  margin-top: 30px;
+  border-radius: 50px;
+  position: relative;
+  overflow: hidden;
+}
+.btn .bg-layer{
+  height: 100%;
+  width: 300%;
+  position: absolute;
+  left: -100%;
+  background: -webkit-linear-gradient(135deg, #9b27ca, #d33639, #9b27ca, #d33639);
+  transition: all 0.4s ease;
+}
+.btn:hover .bg-layer{
+  left: 0;
+}
+.content button{
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  width: 100%;
+  background: none;
+  font-size: 18px;
+  border: none;
+  outline: none;
+  color: #fff;
+  cursor: pointer;
+}
 
-  .advertisement{
-      place-items: center;
-    display: flex; justify-content: center; align-items: center;
-  }
-</style>
-<body>
-<nav class="navbar is-warning" role="navigation" aria-label="main navigation">
+label{
+  font-size: 50px;
+}
+    </style>
+  <body>
+<nav class="navbar" role="navigation" aria-label="main navigation">
   <div class="navbar-brand">
-    <a class="navbar-item">
-
-      <h1 class="title is-1">Wazz</h1>
-
+    <a class="navbar-item" href="https://bulma.io">
+      <img src="https://bulma.io/images/bulma-logo.png" width="112" height="28">
     </a>
 
     <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
@@ -57,140 +132,239 @@ body{
     </a>
   </div>
 
-  <div id="navbarBasicExample" class="navbar-menu is-active">
+  <div id="navbarBasicExample" class="navbar-menu">
     <div class="navbar-start">
 
-      <a class="navbar-item">
-        Faucet
-      </a>
 
-    </div>
+
+      <div class="navbar-item has-dropdown is-hoverable">
+        <a class="navbar-link">
+          Profile
+        </a>
+<div class="navbar-dropdown">
+  <a id="info" class="navbar-item">
+    Anonymous
+  </a>
+</div>
 
     <div class="navbar-end">
-<div class="navbar-item has-dropdown" id="profileDropdown">
-  <a class="navbar-link" id="profileLink">
-    Profile
-  </a>
-
-  <div class="navbar-dropdown is-right">
-    
-        <a class="navbar-item">
-    <div id="info">Not logged in!</div>
-    </a>
-
-
-
-     <a class="navbar-item">
-      <p id="coin"><svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M512 80c0 18-14.3 34.6-38.4 48c-29.1 16.1-72.5 27.5-122.3 30.9c-3.7-1.8-7.4-3.5-11.3-5C300.6 137.4 248.2 128 192 128c-8.3 0-16.4 .2-24.5 .6l-1.1-.6C142.3 114.6 128 98 128 80c0-44.2 86-80 192-80S512 35.8 512 80zM160.7 161.1c10.2-.7 20.7-1.1 31.3-1.1c62.2 0 117.4 12.3 152.5 31.4C369.3 204.9 384 221.7 384 240c0 4-.7 7.9-2.1 11.7c-4.6 13.2-17 25.3-35 35.5c0 0 0 0 0 0c-.1 .1-.3 .1-.4 .2l0 0 0 0c-.3 .2-.6 .3-.9 .5c-35 19.4-90.8 32-153.6 32c-59.6 0-112.9-11.3-148.2-29.1c-1.9-.9-3.7-1.9-5.5-2.9C14.3 274.6 0 258 0 240c0-34.8 53.4-64.5 128-75.4c10.5-1.5 21.4-2.7 32.7-3.5zM416 240c0-21.9-10.6-39.9-24.1-53.4c28.3-4.4 54.2-11.4 76.2-20.5c16.3-6.8 31.5-15.2 43.9-25.5V176c0 19.3-16.5 37.1-43.8 50.9c-14.6 7.4-32.4 13.7-52.4 18.5c.1-1.8 .2-3.5 .2-5.3zm-32 96c0 18-14.3 34.6-38.4 48c-1.8 1-3.6 1.9-5.5 2.9C304.9 404.7 251.6 416 192 416c-62.8 0-118.6-12.6-153.6-32C14.3 370.6 0 354 0 336V300.6c12.5 10.3 27.6 18.7 43.9 25.5C83.4 342.6 135.8 352 192 352s108.6-9.4 148.1-25.9c7.8-3.2 15.3-6.9 22.4-10.9c6.1-3.4 11.8-7.2 17.2-11.2c1.5-1.1 2.9-2.3 4.3-3.4V304v5.7V336zm32 0V304 278.1c19-4.2 36.5-9.5 52.1-16c16.3-6.8 31.5-15.2 43.9-25.5V272c0 10.5-5 21-14.9 30.9c-16.3 16.3-45 29.7-81.3 38.4c.1-1.7 .2-3.5 .2-5.3zM192 448c56.2 0 108.6-9.4 148.1-25.9c16.3-6.8 31.5-15.2 43.9-25.5V432c0 44.2-86 80-192 80S0 476.2 0 432V396.6c12.5 10.3 27.6 18.7 43.9 25.5C83.4 438.6 135.8 448 192 448z"/></svg> Coin: </p> 
-     </a>
-  </div>
-</div>
       <div class="navbar-item">
         <div class="buttons">
-        <a class="button is-link" id="generaterefdis">
-         Ref code Discord
-         </a>
-         <a class="button is-primary" id="logoutdis" onclick="logout()" style="display: none;">
+                  <a class="button is-light" id="logindis" style="display: none;" href="https://discord.com/api/oauth2/authorize?client_id=907200465467494400&redirect_uri=https%3A%2F%2Fcoincliker.walterbbg.repl.co&response_type=token&scope=identify">
+            Log in Discord
+          </a> 
+                   <a class="button is-primary" id="logoutdis" onclick="logout()" style="display: none;">
             <strong>Logout Discord</strong>
           </a>    
-        <a class="button is-light" id="logindis" style="display: none;" href="https://discord.com/api/oauth2/authorize?client_id=907200465467494400&redirect_uri=https%3A%2F%2Fwazzeverfaucet.vercel.app&response_type=token&scope=identify">
-            Log in Discord
-          </a>     
         </div>
       </div>
     </div>
   </div>
 </nav>
 
+      
 
-<br>
-<br>
-
-<div class="containercard1">
-<div class="containercard">
-<div class="box">
-<div class="container">
-  
-  <div class="notification is-primary is-size-1	">
-    Faucet  <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M224 0c17.7 0 32 14.3 32 32V44l96-12c17.7 0 32 14.3 32 32s-14.3 32-32 32L256 84l-31-3.9-1-.1-1 .1L192 84 96 96C78.3 96 64 81.7 64 64s14.3-32 32-32l96 12V32c0-17.7 14.3-32 32-32zM0 224c0-17.7 14.3-32 32-32h96l22.6-22.6c6-6 14.1-9.4 22.6-9.4H192V116.2l32-4 32 4V160h18.7c8.5 0 16.6 3.4 22.6 9.4L320 192h32c88.4 0 160 71.6 160 160c0 17.7-14.3 32-32 32H416c-17.7 0-32-14.3-32-32s-14.3-32-32-32H315.9c-20.2 29-53.9 48-91.9 48s-71.7-19-91.9-48H32c-17.7 0-32-14.3-32-32V224zM436.8 423.4c1.9-4.5 6.3-7.4 11.2-7.4s9.2 2.9 11.2 7.4l18.2 42.4c1.8 4.1 2.7 8.6 2.7 13.1V480c0 17.7-14.3 32-32 32s-32-14.3-32-32v-1.2c0-4.5 .9-8.9 2.7-13.1l18.2-42.4z"/></svg>
+ <section class="hero is-primary">
+  <div class="hero-body">
+    <p class="title">
+      Wazz Mine
+      <br>
+      -------------
+    </p>
   </div>
-  
+</section>
+<section class="hero is-link">
+  <div class="hero-body">
+<div class="animation-container">
+  <img src="https://th.bing.com/th/id/R.2cf1f96d55872b6b6af5417d618e4010?rik=A36G%2bIIjrTUGDw&riu=http%3a%2f%2ficons.iconarchive.com%2ficons%2fcjdowner%2fcryptocurrency-flat%2f1024%2fEthereum-ETH-icon.png&ehk=1D6qzc4MjsPm6w9g6sozGFmgFpmNVMl773D8lZe5%2b6g%3d&risl=&pid=ImgRaw&r=0" alt="Moving Image" class="moving-image1" onclick="showMessage()">
+  <img src="https://www.criptomonedas.co/wp-content/uploads/2021/01/bitcoin-btc-logo.png" alt="Moving Image" class="moving-image" onclick="showMessage()">
+  <img src="https://th.bing.com/th/id/R.6aba4a10008296e4fda7454263c954f9?rik=E5nSG7I07Rjqjw&riu=http%3a%2f%2fthebrowserpirate.weebly.com%2fuploads%2f6%2f6%2f4%2f9%2f66490535%2flitecoin-1_orig.png&ehk=CJ4KYrfcBeV9iuYCes1Yaw%2b7KIPDqphxB3251rS4pZw%3d&risl=&pid=ImgRaw&r=0" alt="Moving Image" class="moving-image2" onclick="showMessage()">
 </div>
 
-  <br>
-  <br>
-<div class="tile is-ancestor">
-  <div class="tile is-vertical is-8">
-    <div class="tile">
-      <div class="tile is-parent is-vertical">
-        <article class="tile is-child notification is-warning">
-<p class="title" id="timer"><svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M464 256A208 208 0 1 1 48 256a208 208 0 1 1 416 0zM0 256a256 256 0 1 0 512 0A256 256 0 1 0 0 256zM232 120V256c0 8 4 15.5 10.7 20l96 64c11 7.4 25.9 4.4 33.3-6.7s4.4-25.9-6.7-33.3L280 243.2V120c0-13.3-10.7-24-24-24s-24 10.7-24 24z"/></svg> Timer: <span id="timerValue">0:00</span></p>
+  </div>
+</section>
 
-        </article>
+
+    
+<style>
+
+
+
+
+  .animation-container {
+    position: relative;
+    width: 100%;
+    height: 128px;
+    overflow: hidden;
+  }
+
+  .moving-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 128px;
+    height: 128px;
+    animation: moveRoll 10s linear infinite;
+  }
+
+    .moving-image1 {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 128px;
+    height: 128px;
+    animation: moveRoll 12s linear infinite;
+  }
+
+      .moving-image2 {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 128px;
+    height: 128px;
+    animation: moveRoll 14s linear infinite;
+  }
+  
+  @keyframes moveRoll {
+    0% {
+      transform: translateX(-100%) rotate(0deg);
+    }
+    100% {
+      transform: translateX(1000%) rotate(360deg);
+    }
+  }
+
+
+</style>
+
+    
+<section class="hero is-primary">
+  <div class="hero-body">
+    
+    <p class="subtitle">
+      <div class="box">
+
+      <span class="icon">
+<svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M240.1 4.2c9.8-5.6 21.9-5.6 31.8 0l171.8 98.1L448 104l0 .9 47.9 27.4c12.6 7.2 18.8 22 15.1 36s-16.4 23.8-30.9 23.8H32c-14.5 0-27.2-9.8-30.9-23.8s2.5-28.8 15.1-36L64 104.9V104l4.4-1.6L240.1 4.2zM64 224h64V416h40V224h64V416h48V224h64V416h40V224h64V420.3c.6 .3 1.2 .7 1.8 1.1l48 32c11.7 7.8 17 22.4 12.9 35.9S494.1 512 480 512H32c-14.1 0-26.5-9.2-30.6-22.7s1.1-28.1 12.9-35.9l48-32c.6-.4 1.2-.7 1.8-1.1V224z"/></svg></span>
+      Mining: <span id="token-count">0</span>
+
+        <span class="tag is-warning">+1 by miner</span>
+        <style>
+        
+.tag.is-warning {
+  display: none;
+  /* Add your desired styling properties here */
+}
+
+        </style>
       </div>
-</div>
-</div>
-</div>
-  <br>
-  <br>
-<div class="faucetclaim" style="display: flex; justify-content: center; align-items: center;">
-  <button id="claimcoin" class="button is-primary">Claim Faucet</button>
-</div>
-
-</div>
-</div>
-</div>
-
-<br>
-  <br>
-
+    </p>
   
-<div class="containercard1">
-<div class="containercard">
-<div class="box">
-  <div class="advertisement">
-<iframe data-aa='2224748' src='//ad.a-ads.com/2224748?size=728x90' style='width:728px; height:90px; border:0px; padding:0; overflow:hidden; background-color: transparent;'></iframe>    <br>
-<script type="text/javascript">
-	atOptions = {
-		'key' : '76610e48f7a3f57610a313efe1fc23ab',
-		'format' : 'iframe',
-		'height' : 90,
-		'width' : 728,
-		'params' : {}
-	};
-	document.write('<scr' + 'ipt type="text/javascript" src="http' + (location.protocol === 'https:' ? 's' : '') + '://www.profitabledisplaynetwork.com/76610e48f7a3f57610a313efe1fc23ab/invoke.js"></scr' + 'ipt>');
-</script>
+    
+<p class="subtitle">
+     <div class="box">
+  <span class="icon">
+<svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M176 0c-17.7 0-32 14.3-32 32s14.3 32 32 32h16V98.4C92.3 113.8 16 200 16 304c0 114.9 93.1 208 208 208s208-93.1 208-208c0-41.8-12.3-80.7-33.5-113.2l24.1-24.1c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L355.7 143c-28.1-23-62.2-38.8-99.7-44.6V64h16c17.7 0 32-14.3 32-32s-14.3-32-32-32H224 176zm72 192V320c0 13.3-10.7 24-24 24s-24-10.7-24-24V192c0-13.3 10.7-24 24-24s24 10.7 24 24z"/></svg>      </span>
+      Miner expired date: <span id="timer">----</span>
+     </div>
+    </p>
+    <br>
+    <button class="button is-primary is-light is-right" id="buy-miner-btn">Buy a miner!</button>
   </div>
-  <div class="advertisement">
-  <script type="text/javascript">
-	atOptions = {
-		'key' : '62ec58b718fe1df1b73327228497a292',
-		'format' : 'iframe',
-		'height' : 60,
-		'width' : 468,
-		'params' : {}
-	};
-	document.write('<scr' + 'ipt type="text/javascript" src="http' + (location.protocol === 'https:' ? 's' : '') + '://www.profitabledisplaynetwork.com/62ec58b718fe1df1b73327228497a292/invoke.js"></scr' + 'ipt>');
-</script>
-<script type="text/javascript">
-	atOptions = {
-		'key' : '61543f1c60a0cefc097b0cc5369337cb',
-		'format' : 'iframe',
-		'height' : 50,
-		'width' : 320,
-		'params' : {}
-	};
-	document.write('<scr' + 'ipt type="text/javascript" src="http' + (location.protocol === 'https:' ? 's' : '') + '://www.profitabledisplaynetwork.com/61543f1c60a0cefc097b0cc5369337cb/invoke.js"></scr' + 'ipt>');
-</script>
-  </div>
-  
-</div>
-</div>
-</div>
+</section>
 
-<br>
-<br>
-  
+    <style>
+.notification-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px; /* Add this line to align notifications to the right */
+}
+
+.notification {
+  position: relative;
+  margin-bottom: 10px;
+  text-align: right; /* Add this line to align the notification content to the right */
+}
+
+
+
+    </style>
+
+
+      
+<div id="notificationContainer" class="notification-container"></div>
+
+    
+<script>
+
+
+  document.addEventListener('DOMContentLoaded', () => {
+
+  // Get all "navbar-burger" elements
+  const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+
+  // Add a click event on each of them
+  $navbarBurgers.forEach( el => {
+    el.addEventListener('click', () => {
+
+      // Get the target from the "data-target" attribute
+      const target = el.dataset.target;
+      const $target = document.getElementById(target);
+
+      // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
+      el.classList.toggle('is-active');
+      $target.classList.toggle('is-active');
+
+    });
+  });
+
+});
+
+  document.addEventListener('DOMContentLoaded', () => {
+  (document.querySelectorAll('.notification .delete') || []).forEach(($delete) => {
+    const $notification = $delete.parentNode;
+
+    $delete.addEventListener('click', () => {
+      $notification.parentNode.removeChild($notification);
+    });
+  });
+});
+// Function to create a notification element
+function createNotification() {
+  const notificationContainer = document.getElementById('notificationContainer');
+  const notifications = notificationContainer.getElementsByClassName('notification');
+
+  // Remove the oldest notification if the maximum number of notifications is reached
+  if (notifications.length >= 3) {
+    notificationContainer.removeChild(notifications[0]);
+  }
+
+  const notification = document.createElement('div');
+  notification.className = 'notification is-warning is-light';
+
+  const closeButton = document.createElement('button');
+  closeButton.className = 'delete';
+  closeButton.addEventListener('click', () => {
+    notificationContainer.removeChild(notification);
+  });
+
+  const notificationContent = document.createTextNode('+1');
+
+  notification.appendChild(closeButton);
+  notification.appendChild(notificationContent);
+  notificationContainer.appendChild(notification);
+
+  // Remove the notification after 2 seconds
+  setTimeout(() => {
+    notificationContainer.removeChild(notification);
+  }, 2000);
+}
+
+
+
+</script>
+
+        
 <div class="overlay" style="display: none;"></div>
 <div id="detect"></div>
 <div class="wrapper">
@@ -206,15 +380,20 @@ body{
     </div>
   </div>
 </div>
-  
 
+
+   <section class="hero is-warning">
+<div class="hero-body" style="display: flex; justify-content: center; align-items: center;">
+<iframe data-aa='2224748' src='//ad.a-ads.com/2224748?size=728x90' style='width:728px; height:90px; border:0px; padding:0; overflow:hidden; background-color: transparent;'></iframe>    <br>
+  </div>
+</section>
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+  <script src="app.js"></script>
   <script src="main.js"></script>
-  <script src="funtd.js"></script>
-
-
-<script src="newscript.js"></script>
-  
-</body>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    
+  </body>
 </html>
-
-
