@@ -379,13 +379,13 @@ document.getElementById('buy-miner-btn').addEventListener('click', () => {
                   console.error('Error buying miner:', error);
                 });
             } else {
-              console.log('Insufficient tokens to buy a new miner.');
+              alert('Insufficient tokens to buy a new miner.');
             }
           } else {
-            console.log('Cannot buy a new miner. Existing miner still active.');
+            alert('Cannot buy a new miner. Existing miner still active.');
           }
         } else {
-          console.log('User document does not exist.');
+          alert('User document does not exist.');
         }
       })
       .catch((error) => {
